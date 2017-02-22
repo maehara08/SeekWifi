@@ -6,6 +6,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
@@ -36,8 +37,24 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+
+        final Handler handler =new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        scanWifiState();
+                        handler.postDelayed(this, 2000);
+                    }
+                });
+
+            }
+        });
         scanWifiState();
     }
+
     // 結果の受け取り
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -66,9 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         + apList.get(i).frequency + "MHz " + apList.get(i).level + "dBm";
             }
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, aps);
-//            setListAdapter(adapter);
             listView.setAdapter(adapter);
         }
     }
-
 }
